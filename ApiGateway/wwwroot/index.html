@@ -1,0 +1,340 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Gateway | .NET 10 Enterprise API Proxy</title>
+    <style>
+        :root {
+            --bg-main: #0B0F19;
+            --bg-card: #151B2C;
+            --accent-dotnet: #512BD4; /* Official .NET Purple */
+            --accent-glow: #7C5CFF;
+            --text-primary: #F3F4F6;
+            --text-secondary: #9CA3AF;
+            --text-muted: #6B7280;
+            --code-bg: #070A10;
+            --border-color: #242F47;
+            --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-stack);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+            /* Background Radial Glow */
+            body::before {
+                content: "";
+                position: absolute;
+                top: -10%;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 1000px;
+                height: 600px;
+                background: radial-gradient(circle, rgba(81, 43, 212, 0.15) 0%, rgba(11, 15, 25, 0) 70%);
+                z-index: -1;
+                pointer-events: none;
+            }
+
+        header {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+            .logo span {
+                color: var(--accent-glow);
+            }
+
+        .badge {
+            background: rgba(81, 43, 212, 0.2);
+            border: 1px solid var(--accent-dotnet);
+            color: var(--text-primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            font-weight: bold;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 5rem auto;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #FFF 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-dotnet);
+            color: white;
+            box-shadow: 0 4px 14px rgba(81, 43, 212, 0.4);
+        }
+
+            .btn-primary:hover {
+                background-color: var(--accent-glow);
+                transform: translateY(-1px);
+            }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+            .btn-secondary:hover {
+                background-color: rgba(255, 255, 255, 0.05);
+                border-color: var(--text-muted);
+            }
+
+        /* Features Section */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 5rem;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 12px;
+            transition: border-color 0.2s ease;
+        }
+
+            .card:hover {
+                border-color: rgba(124, 92, 255, 0.4);
+            }
+
+            .card h3 {
+                font-size: 1.25rem;
+                margin-bottom: 0.75rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .card p {
+                color: var(--text-secondary);
+                font-size: 0.95rem;
+            }
+
+        /* Quick Start / Code Section */
+        .quickstart {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            font-family: var(--font-mono);
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .quickstart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .dots {
+            display: flex;
+            gap: 0.35rem;
+        }
+
+        .dot {
+            width: 100px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--border-color);
+        }
+
+        pre {
+            overflow-x: auto;
+            font-size: 0.9rem;
+            color: #A9B2C3;
+        }
+
+        .keyword {
+            color: #F43F5E;
+        }
+
+        .type {
+            color: #60A5FA;
+        }
+
+        .string {
+            color: #34D399;
+        }
+
+        .comment {
+            color: var(--text-muted);
+        }
+
+        footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 5rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .cta-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 2rem;">
+
+        <!-- 1. LEFT SIDE: Logo Image -->
+        <div style="flex: 1; display: flex; justify-content: flex-start;">
+            <img src="/img/ocelot_logo.png" alt="Ocelot Logo" style="height: 40px; width: auto; object-fit: contain;" />
+        </div>
+
+        <!-- 2. CENTER: Title Text -->
+        <div class="logo" style="flex: 1; display: flex; justify-content: center; white-space: nowrap;">
+            OCELOT<span>//</span>GATE
+        </div>
+
+        <!-- 3. RIGHT SIDE: .NET 10 Badge -->
+        <div style="flex: 1; display: flex; justify-content: flex-end;">
+            <span class="badge">.NET 10</span>
+        </div>
+
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>MCSC6002 - API Gateway</h1>
+            <p>Welcome to the API.<br />This gateway is responsible for routing and managing API requests.<br />To learn more, please refer to the documentation or contact the administrator.</p>
+            <!--<div class="cta-group">
+                <a href="#docs" class="btn btn-primary">Explore Documentation</a>
+                <a href="#quickstart" class="btn btn-secondary">View Quickstart</a>
+            </div>-->
+        </section>
+
+        <section class="grid">
+            <div class="card">
+                <h3>🧩 Unified Microservice Routing</h3>
+                <p>Seamlessly routes incoming upstream requests to downsteam .NET 10 microservices using lightweight, file-based configuration profiles.</p>
+            </div>
+            <div class="card">
+                <h3>🛡️ Native Token Validation</h3>
+                <p>Built-in JWT validation and OAuth2 authorization filters directly handled at the gateway edge layer before hits reach downstream microservices.</p>
+            </div>
+            <!--<div class="card">
+                <h3>📊 Hybrid Telemetry</h3>
+                <p>Preconfigured OpenTelemetry exports out of the box. Stream metrics, logs, and trace contexts directly into Prometheus, Grafana, or Azure Monitor.</p>
+            </div>-->
+        </section>
+
+        <section class="quickstart" id="quickstart">
+            <div class="quickstart-header">
+                <div class="dots">
+                    <div class="dot" style="background-color: #EF4444;"></div>
+                    <div class="dot" style="background-color: #F59E0B;"></div>
+                    <div class="dot" style="background-color: #10B981;"></div>
+                </div>
+                <span>Program.cs</span>
+            </div>
+            <pre>
+            <code>
+<span class="comment">// Add Ocelot configuration file</span>
+builder.Configuration.AddJsonFile(<span class="string">"ocelot.json"</span>, optional: <span class="keyword">false</span>, reloadOnChange: <span class="keyword">true</span>);
+
+<span class="comment">// Inject Ocelot core services</span>
+builder.Services.AddOcelot();
+
+<span class="keyword">var</span> app = builder.Build();
+
+<span class="comment">// Use the Ocelot pipeline in .NET 10</span>
+<span class="keyword">await</span> app.UseOcelot();
+                </code>
+            </pre>
+        </section>
+    </main>
+
+    <footer>
+        <div style="margin-bottom: 1.5rem; display: flex; justify-content: center; gap: 1.5rem;">
+            <a href="https://github.com/ThreeMammals/Ocelot" target="_blank" style="color: var(--text-muted); text-decoration: none; transition: color 0.2s;">Ocelot GitHub</a>
+        </div>
+        <p>&copy; 2026 Ocelot Gate Proxy. Powered by the .NET 10 SDK runtime ecosystem.</p>
+    </footer>
+
+</body>
+</html>

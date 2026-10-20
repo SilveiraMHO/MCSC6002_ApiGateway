@@ -1,0 +1,87 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "TokenSettings": {
+    "Secret": "ao787VuHniutbig8ob5cf000pju787jlpzDD0"
+  },
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/auth/login",
+      "UpstreamHttpMethod": [ "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "" // Empty value means "no authentication is required for this route".
+      },
+
+      "DownstreamPathTemplate": "/api/token/login",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7284
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/identity/users/create",
+      "UpstreamHttpMethod": [ "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "ForwardedHeaders": {
+        "Authorization": "Authorization"
+      },
+
+      "DownstreamPathTemplate": "/api/users/create",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7284
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/identity/users/{userId}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "ForwardedHeaders": {
+        "Authorization": "Authorization"
+      },
+
+      "DownstreamPathTemplate": "/api/users/{userId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7284
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/product-service/brands/create",
+      "UpstreamHttpMethod": [ "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "ForwardedHeaders": {
+        "Authorization": "Authorization"
+      },
+
+      "DownstreamPathTemplate": "/api/brands/create",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7017
+        }
+      ]
+    }
+  ]
+}
