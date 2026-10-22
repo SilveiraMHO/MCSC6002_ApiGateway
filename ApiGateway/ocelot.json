@@ -27,10 +27,29 @@
       ]
     },
     {
+      "UpstreamPathTemplate": "/auth/refresh-token",
+      "UpstreamHttpMethod": [ "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "" // No auth: the access token is expected to be expired; IdentityService checks it.
+      },
+
+      "DownstreamPathTemplate": "/api/token/refresh-token",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7284
+        }
+      ]
+    },
+    {
       "UpstreamPathTemplate": "/identity/users/create",
       "UpstreamHttpMethod": [ "POST" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
+      },
+      "RouteClaimsRequirement": { // First authorization check; the service checks the same permission again.
+        "permission": "Permission.Identity.Users.Create"
       },
       "ForwardedHeaders": {
         "Authorization": "Authorization"
@@ -51,6 +70,9 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
+      "RouteClaimsRequirement": {
+        "permission": "Permission.Identity.Users.Read"
+      },
       "ForwardedHeaders": {
         "Authorization": "Authorization"
       },
@@ -69,6 +91,9 @@
       "UpstreamHttpMethod": [ "POST" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
+      },
+      "RouteClaimsRequirement": {
+        "permission": "Permission.Product.Brands.Create"
       },
       "ForwardedHeaders": {
         "Authorization": "Authorization"
@@ -89,6 +114,9 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
+      "RouteClaimsRequirement": {
+        "permission": "Permission.Product.Brands.Update"
+      },
       "ForwardedHeaders": {
         "Authorization": "Authorization"
       },
@@ -107,6 +135,9 @@
       "UpstreamHttpMethod": [ "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
+      },
+      "RouteClaimsRequirement": {
+        "permission": "Permission.Product.Brands.Delete"
       },
       "ForwardedHeaders": {
         "Authorization": "Authorization"
@@ -127,6 +158,9 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
+      "RouteClaimsRequirement": {
+        "permission": "Permission.Product.Brands.Read"
+      },
       "ForwardedHeaders": {
         "Authorization": "Authorization"
       },
@@ -145,6 +179,9 @@
       "UpstreamHttpMethod": [ "GET" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
+      },
+      "RouteClaimsRequirement": {
+        "permission": "Permission.Product.Brands.Read"
       },
       "ForwardedHeaders": {
         "Authorization": "Authorization"
@@ -165,6 +202,9 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
+      "RouteClaimsRequirement": {
+        "permission": "Permission.Product.Products.Create"
+      },
       "ForwardedHeaders": {
         "Authorization": "Authorization"
       },
@@ -183,6 +223,9 @@
       "UpstreamHttpMethod": [ "PUT" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
+      },
+      "RouteClaimsRequirement": {
+        "permission": "Permission.Product.Products.Update"
       },
       "ForwardedHeaders": {
         "Authorization": "Authorization"
@@ -203,6 +246,9 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
+      "RouteClaimsRequirement": {
+        "permission": "Permission.Product.Products.Delete"
+      },
       "ForwardedHeaders": {
         "Authorization": "Authorization"
       },
@@ -221,6 +267,9 @@
       "UpstreamHttpMethod": [ "GET" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
+      },
+      "RouteClaimsRequirement": {
+        "permission": "Permission.Product.Products.Read"
       },
       "ForwardedHeaders": {
         "Authorization": "Authorization"
@@ -241,6 +290,9 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
+      "RouteClaimsRequirement": {
+        "permission": "Permission.Product.Products.Read"
+      },
       "ForwardedHeaders": {
         "Authorization": "Authorization"
       },
@@ -259,6 +311,9 @@
       "UpstreamHttpMethod": [ "PUT" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
+      },
+      "RouteClaimsRequirement": {
+        "permission": "Permission.Inventory.InventoryItems.Update"
       },
       "ForwardedHeaders": {
         "Authorization": "Authorization"
@@ -279,6 +334,9 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
+      "RouteClaimsRequirement": {
+        "permission": "Permission.Inventory.InventoryItems.Read"
+      },
       "ForwardedHeaders": {
         "Authorization": "Authorization"
       },
@@ -297,6 +355,9 @@
       "UpstreamHttpMethod": [ "GET" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
+      },
+      "RouteClaimsRequirement": {
+        "permission": "Permission.Inventory.InventoryItems.Read"
       },
       "ForwardedHeaders": {
         "Authorization": "Authorization"
@@ -317,6 +378,9 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
+      "RouteClaimsRequirement": {
+        "permission": "Permission.Inventory.InventoryItems.Read"
+      },
       "ForwardedHeaders": {
         "Authorization": "Authorization"
       },
@@ -335,6 +399,9 @@
       "UpstreamHttpMethod": [ "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
+      },
+      "RouteClaimsRequirement": {
+        "permission": "Permission.Inventory.InventoryItems.Delete"
       },
       "ForwardedHeaders": {
         "Authorization": "Authorization"
