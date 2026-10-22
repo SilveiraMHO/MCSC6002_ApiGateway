@@ -79,7 +79,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7080
+          "Port": 7280
         }
       ]
     },
@@ -98,7 +98,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7080
+          "Port": 7280
         }
       ]
     },
@@ -117,7 +117,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7080
+          "Port": 7280
         }
       ]
     },
@@ -136,7 +136,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7080
+          "Port": 7280
         }
       ]
     },
@@ -155,7 +155,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7080
+          "Port": 7280
         }
       ]
     },
@@ -174,7 +174,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7080
+          "Port": 7280
         }
       ]
     },
@@ -193,7 +193,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7080
+          "Port": 7280
         }
       ]
     },
@@ -212,7 +212,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7080
+          "Port": 7280
         }
       ]
     },
@@ -231,7 +231,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7080
+          "Port": 7280
         }
       ]
     },
@@ -250,7 +250,102 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7080
+          "Port": 7280
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/inventory-service/items/change-item-status",
+      "UpstreamHttpMethod": [ "PUT" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "ForwardedHeaders": {
+        "Authorization": "Authorization"
+      },
+
+      "DownstreamPathTemplate": "/api/inventoryitems/change-item-status",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7148
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/inventory-service/items/all",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "ForwardedHeaders": {
+        "Authorization": "Authorization"
+      },
+
+      "DownstreamPathTemplate": "/api/inventoryitems/all",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7148
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/inventory-service/items/{id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "ForwardedHeaders": {
+        "Authorization": "Authorization"
+      },
+
+      "DownstreamPathTemplate": "/api/inventoryitems/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7148
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/inventory-service/items/get-by-product-id/{productId}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "ForwardedHeaders": {
+        "Authorization": "Authorization"
+      },
+
+      "DownstreamPathTemplate": "/api/inventoryitems/get-by-product-id/{productId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7148
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/inventory-service/items/delete/{id}",
+      "UpstreamHttpMethod": [ "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "ForwardedHeaders": {
+        "Authorization": "Authorization"
+      },
+
+      "DownstreamPathTemplate": "/api/inventoryitems/delete/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7148
         }
       ]
     }
