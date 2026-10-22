@@ -17,7 +17,8 @@ namespace ApiGateway
         {
             // RS256: the gateway only has the public key, so it can verify tokens but not create them.
             var rsa = RSA.Create();
-            rsa.ImportFromPem(File.ReadAllText(configuration["TokenSettings:PublicKeyPath"]));
+            rsa.ImportFromPem(File.ReadAllText(configuration["TokenSettings:PublicKeyPath"]
+                ?? throw new InvalidOperationException("TokenSettings:PublicKeyPath is not configured.")));
 
             // Same configuration of IdentityService.
             services
