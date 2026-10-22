@@ -7,7 +7,7 @@
   },
   "AllowedHosts": "*",
   "TokenSettings": {
-    "Secret": "ao787VuHniutbig8ob5cf000pju787jlpzDD0"
+    "PublicKeyPath": "../../keys/jwt-public.pem"
   },
   "Routes": [
     {

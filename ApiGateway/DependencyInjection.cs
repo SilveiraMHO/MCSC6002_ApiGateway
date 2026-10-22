@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using ResponseLibrary.Wrappers;
 using System.Net;
 using System.Security.Claims;
-using System.Text;
+using System.Security.Cryptography;
 using System.Text.Json;
 
 namespace ApiGateway
@@ -15,7 +15,9 @@ namespace ApiGateway
     {
         internal static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            var secretInBytes = Encoding.ASCII.GetBytes(configuration["TokenSettings:Secret"]);
+            // RS256: the gateway only has the public key, so it can verify tokens but not create them.
+            var rsa = RSA.Create();
+            rsa.ImportFromPem(File.ReadAllText(configuration["TokenSettings:PublicKeyPath"]));
 
             // Same configuration of IdentityService.
             services
@@ -38,7 +40,8 @@ namespace ApiGateway
                         ValidAudience = AppClaim.Audience,
                         RoleClaimType = ClaimTypes.Role,
                         ClockSkew = TimeSpan.Zero,
-                        IssuerSigningKey = new SymmetricSecurityKey(secretInBytes)
+                        IssuerSigningKey = new RsaSecurityKey(rsa),
+                        ValidAlgorithms = [SecurityAlgorithms.RsaSha256]
                     };
                     bearer.Events = new JwtBearerEvents
                     {
@@ -55,10 +58,11 @@ namespace ApiGateway
                             }
                             else
                             {
-                                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                                // Bad signature, wrong algorithm, malformed token: client error, not server error.
+                                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                                 context.Response.ContentType = "application/json";
 
-                                var result = JsonSerializer.Serialize(ResponseWrapper.Fail("An unhandled error has occured."));
+                                var result = JsonSerializer.Serialize(ResponseWrapper.Fail("Invalid token."));
 
                                 return context.Response.WriteAsync(result);
                             }
