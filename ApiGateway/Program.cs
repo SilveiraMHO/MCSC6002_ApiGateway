@@ -27,6 +27,7 @@ builder.Services.AddSingleton<IMessageInvokerPool, MtlsMessageInvokerPool>(); //
 // DI
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddIdentitySettings();
+builder.Services.AddAuthRateLimiting();
 
 var app = builder.Build();
 
@@ -52,6 +53,7 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseCors("Client");
+app.UseRateLimiter();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 await app.UseOcelot();
 app.Run();

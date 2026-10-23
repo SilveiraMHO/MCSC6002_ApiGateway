@@ -8,6 +8,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text.Json;
+using System.Threading.RateLimiting;
 
 namespace ApiGateway
 {
@@ -106,6 +107,29 @@ namespace ApiGateway
                 .AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
             return services;
+        }
+
+        // Brute-force protection: at most 5 login/refresh attempts per minute per client IP.
+        // Ocelot's own rate limiting keys clients by a header the caller controls, so it can be bypassed.
+        internal static IServiceCollection AddAuthRateLimiting(this IServiceCollection services)
+        {
+            return services.AddRateLimiter(options =>
+            {
+                options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+                    context.Request.Path.StartsWithSegments("/auth")
+                        ? RateLimitPartition.GetFixedWindowLimiter(
+                            context.Connection.RemoteIpAddress?.ToString() ?? "unknown", // ponytail: behind a proxy/load balancer use ForwardedHeaders, or all clients share one IP.
+                            _ => new FixedWindowRateLimiterOptions { PermitLimit = 5, Window = TimeSpan.FromMinutes(1) })
+                        : RateLimitPartition.GetNoLimiter(string.Empty));
+
+                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+                options.OnRejected = (context, cancellationToken) =>
+                {
+                    context.HttpContext.Response.ContentType = "application/json";
+                    var result = JsonSerializer.Serialize(ResponseWrapper.Fail("Too many attempts. Try again later."));
+                    return new ValueTask(context.HttpContext.Response.WriteAsync(result, cancellationToken));
+                };
+            });
         }
     }
 }
