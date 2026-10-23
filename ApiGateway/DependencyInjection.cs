@@ -118,7 +118,7 @@ namespace ApiGateway
                 options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
                     context.Request.Path.StartsWithSegments("/auth")
                         ? RateLimitPartition.GetFixedWindowLimiter(
-                            context.Connection.RemoteIpAddress?.ToString() ?? "unknown", // ponytail: behind a proxy/load balancer use ForwardedHeaders, or all clients share one IP.
+                            context.Connection.RemoteIpAddress?.ToString() ?? "unknown", // Limitation: behind a proxy, use ForwardedHeaders or all clients share one IP.
                             _ => new FixedWindowRateLimiterOptions { PermitLimit = 5, Window = TimeSpan.FromMinutes(1) })
                         : RateLimitPartition.GetNoLimiter(string.Empty));
 

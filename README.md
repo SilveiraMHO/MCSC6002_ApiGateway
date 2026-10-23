@@ -19,4 +19,4 @@ openssl pkcs12 -export -inkey gateway-client.key -in gateway-client.crt -out gat
 rm -f *.csr *.ext ca.srl
 ```
 
-The gateway gets `gateway-client.pfx` and `ca.crt`; each service gets `service.pfx` and `ca.crt`.
+The gateway gets `gateway-client.pfx`, `service.pfx` (its HTTPS certificate) and `ca.crt`; each service gets `service.pfx` and `ca.crt`.

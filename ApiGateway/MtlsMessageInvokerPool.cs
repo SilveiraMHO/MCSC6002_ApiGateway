@@ -40,7 +40,7 @@ namespace ApiGateway
             using var chain = new X509Chain();
             chain.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust; // Trust only the project CA, not the OS store.
             chain.ChainPolicy.CustomTrustStore.Add(_ca);
-            chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck; // ponytail: dev CA has no CRL; add one if certs must be revocable.
+            chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck; // Limitation: dev CA has no CRL, so issued certs cannot be revoked.
             chain.ChainPolicy.ApplicationPolicy.Add(new Oid("1.3.6.1.5.5.7.3.1")); // EKU: server authentication.
 
             return chain.Build(certificate);
