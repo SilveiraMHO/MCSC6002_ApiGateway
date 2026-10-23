@@ -43,6 +43,25 @@
       ]
     },
     {
+      "UpstreamPathTemplate": "/auth/revoke-token",
+      "UpstreamHttpMethod": [ "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer" // Any signed-in user; revokes only their own token.
+      },
+      "ForwardedHeaders": {
+        "Authorization": "Authorization"
+      },
+
+      "DownstreamPathTemplate": "/api/token/revoke",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7284
+        }
+      ]
+    },
+    {
       "UpstreamPathTemplate": "/identity/users/create",
       "UpstreamHttpMethod": [ "POST" ],
       "AuthenticationOptions": {

@@ -13,6 +13,7 @@ var serverCertificate = X509CertificateLoader.LoadPkcs12FromFile(builder.Configu
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.AddServerHeader = false; // No Server header.
+    options.Limits.MaxRequestBodySize = 2 * 1024 * 1024; // Default ~28 MB; 2 MB fits a base64 product image.
     options.ConfigureHttpsDefaults(https => https.ServerCertificate = serverCertificate);
 });
 
