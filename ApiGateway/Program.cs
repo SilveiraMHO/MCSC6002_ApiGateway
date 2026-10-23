@@ -31,13 +31,18 @@ builder.Services.AddAuthRateLimiting();
 
 var app = builder.Build();
 
-// Ocelot copies downstream response headers; strip ones that reveal the internal stack.
+// Response headers for every gateway response. Ocelot copies downstream headers, so strip the ones that
+// reveal the internal stack, then add the API security headers (ZAP findings).
 app.Use(async (context, next) =>
 {
     context.Response.OnStarting(() =>
     {
-        context.Response.Headers.Remove("Server");
-        context.Response.Headers.Remove("X-Powered-By");
+        var headers = context.Response.Headers;
+        headers.Remove("Server");
+        headers.Remove("X-Powered-By");
+        headers.XContentTypeOptions = "nosniff";               // No MIME sniffing of JSON responses.
+        headers["Cross-Origin-Resource-Policy"] = "same-origin"; // Other sites can't embed API responses.
+        headers.CacheControl = "no-store";                      // Responses may hold personal data; never cache.
         return Task.CompletedTask;
     });
     await next();
@@ -54,8 +59,6 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseDefaultFiles();
-app.UseStaticFiles();
 app.UseRouting();
 app.UseCors("Client");
 app.UseRateLimiter();
