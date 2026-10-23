@@ -14,7 +14,7 @@
       "UpstreamPathTemplate": "/auth/login",
       "UpstreamHttpMethod": [ "POST" ],
       "AuthenticationOptions": {
-        "AuthenticationProviderKey": "" // Empty value means "no authentication is required for this route".
+        "AuthenticationProviderKey": "" // Anonymous.
       },
 
       "DownstreamPathTemplate": "/api/token/login",
@@ -30,7 +30,7 @@
       "UpstreamPathTemplate": "/auth/refresh-token",
       "UpstreamHttpMethod": [ "POST" ],
       "AuthenticationOptions": {
-        "AuthenticationProviderKey": "" // No auth: the access token is expected to be expired; IdentityService checks it.
+        "AuthenticationProviderKey": "" // Anonymous: token expected expired; Identity validates it.
       },
 
       "DownstreamPathTemplate": "/api/token/refresh-token",
@@ -48,7 +48,7 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
-      "RouteClaimsRequirement": { // First authorization check; the service checks the same permission again.
+      "RouteClaimsRequirement": { // Rechecked in the service.
         "permission": "Permission.Identity.Users.Create"
       },
       "ForwardedHeaders": {

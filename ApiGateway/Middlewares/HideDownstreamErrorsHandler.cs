@@ -4,8 +4,7 @@ using System.Text.Json;
 
 namespace ApiGateway.Middlewares
 {
-    // Ocelot copies downstream bodies to the client as-is. A service 5xx can carry a stack trace (and the caller's
-    // headers, in Development), so the body is replaced with a generic message; the status code is kept.
+    // Ocelot passes downstream bodies through; a 5xx may hold a stack trace. Keep status, replace body.
     public class HideDownstreamErrorsHandler : DelegatingHandler
     {
         private readonly ILogger<HideDownstreamErrorsHandler> _logger;
@@ -21,7 +20,6 @@ namespace ApiGateway.Middlewares
 
             if ((int)response.StatusCode >= 500)
             {
-                // The service logs its own exception; the gateway only records which call failed.
                 _logger.LogWarning("Downstream {StatusCode} for {Method} {Path}", (int)response.StatusCode, request.Method, request.RequestUri?.AbsolutePath);
 
                 var responseWrapper = await ResponseWrapper.FailAsync();

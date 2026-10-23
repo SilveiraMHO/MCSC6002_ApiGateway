@@ -25,7 +25,7 @@ namespace ApiGateway.Middlewares
 
                 if (context.Response.StatusCode == StatusCodes.Status502BadGateway)
                 {
-                    // Internal address goes to the log only; the client must not learn the internal topology.
+                    // Internal address: log only.
                     _logger.LogWarning("Downstream unavailable: {Downstream}", GetDownstreamDomain(context));
 
                     throw new ServiceUnavailableException("Service Unavailable");
@@ -45,7 +45,7 @@ namespace ApiGateway.Middlewares
                         responseWrapper.Messages = [suex.FriendlyErrorMessage];
                         break;
                     default:
-                        // Exception details (message, stack trace) are logged, never returned to the client.
+                        // Details: log only.
                         _logger.LogError(ex, "Unhandled exception at the gateway.");
                         response.StatusCode = (int)HttpStatusCode.InternalServerError;
                         responseWrapper.Messages = ["An internal error occurred."];

@@ -16,12 +16,11 @@ namespace ApiGateway
     {
         internal static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            // RS256: the gateway only has the public key, so it can verify tokens but not create them.
+            // RS256: public key only, verify only.
             var rsa = RSA.Create();
             rsa.ImportFromPem(File.ReadAllText(configuration["TokenSettings:PublicKeyPath"]
                 ?? throw new InvalidOperationException("TokenSettings:PublicKeyPath is not configured.")));
 
-            // Same configuration of IdentityService.
             services
                 .AddAuthentication(auth =>
                 {
@@ -60,7 +59,7 @@ namespace ApiGateway
                             }
                             else
                             {
-                                // Bad signature, wrong algorithm, malformed token: client error, not server error.
+                                // Invalid token: 401, not 500.
                                 context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                                 context.Response.ContentType = "application/json";
 
@@ -109,8 +108,7 @@ namespace ApiGateway
             return services;
         }
 
-        // Brute-force protection: at most 5 login/refresh attempts per minute per client IP.
-        // Ocelot's own rate limiting keys clients by a header the caller controls, so it can be bypassed.
+        // 5 auth calls/min per IP. Not Ocelot's limiter: it keys on a caller-controlled header.
         internal static IServiceCollection AddAuthRateLimiting(this IServiceCollection services)
         {
             return services.AddRateLimiter(options =>
@@ -118,7 +116,7 @@ namespace ApiGateway
                 options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
                     context.Request.Path.StartsWithSegments("/auth")
                         ? RateLimitPartition.GetFixedWindowLimiter(
-                            context.Connection.RemoteIpAddress?.ToString() ?? "unknown", // Limitation: behind a proxy, use ForwardedHeaders or all clients share one IP.
+                            context.Connection.RemoteIpAddress?.ToString() ?? "unknown", // Limitation: behind a proxy needs ForwardedHeaders.
                             _ => new FixedWindowRateLimiterOptions { PermitLimit = 5, Window = TimeSpan.FromMinutes(1) })
                         : RateLimitPartition.GetNoLimiter(string.Empty));
 

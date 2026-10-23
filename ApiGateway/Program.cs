@@ -7,12 +7,12 @@ using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// HTTPS certificate issued by the project CA, so InventoryService can validate the gateway without the OS store.
+// Project-CA cert: Inventory validates the gateway against it.
 var serverCertificate = X509CertificateLoader.LoadPkcs12FromFile(builder.Configuration["MutualTls:ServerCertificatePath"]!, password: null);
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.AddServerHeader = false; // Do not advertise the web server (Server: Kestrel) to clients.
+    options.AddServerHeader = false; // No Server header.
     options.ConfigureHttpsDefaults(https => https.ServerCertificate = serverCertificate);
 });
 
@@ -29,16 +29,15 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddOcelot().AddDelegatingHandler<HideDownstreamErrorsHandler>(global: true);
-builder.Services.AddSingleton<IMessageInvokerPool, MtlsMessageInvokerPool>(); // Replaces Ocelot's default: adds mTLS to downstream calls.
+builder.Services.AddSingleton<IMessageInvokerPool, MtlsMessageInvokerPool>(); // mTLS to services.
 
-// DI
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddIdentitySettings();
 builder.Services.AddAuthRateLimiting();
 
 var app = builder.Build();
 
-// Ocelot copies downstream headers: strip the ones that reveal the stack, add the API security headers.
+// Strip stack-revealing headers (incl. downstream copies); add security headers.
 app.Use(async (context, next) =>
 {
     context.Response.OnStarting(() =>
@@ -46,22 +45,21 @@ app.Use(async (context, next) =>
         var headers = context.Response.Headers;
         headers.Remove("Server");
         headers.Remove("X-Powered-By");
-        headers.XContentTypeOptions = "nosniff";               // No MIME sniffing of JSON responses.
-        headers["Cross-Origin-Resource-Policy"] = "same-origin"; // Other sites can't embed API responses.
-        headers.CacheControl = "no-store";                      // Responses may hold personal data; never cache.
+        headers.XContentTypeOptions = "nosniff";
+        headers["Cross-Origin-Resource-Policy"] = "same-origin";
+        headers.CacheControl = "no-store"; // May hold personal data.
         return Task.CompletedTask;
     });
     await next();
 });
 
-// Explicit, so they run after the header middleware above. Without these calls ASP.NET inserts them at the very
-// start of the pipeline; the JWT handler then writes 401 responses before OnStarting is registered, and the request crashes.
+// Explicit, after the header middleware; otherwise auth runs first and its 401 crashes OnStarting.
 app.UseAuthentication();
 app.UseAuthorization();
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseHsts(); // Tells browsers to use HTTPS only for this host.
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();

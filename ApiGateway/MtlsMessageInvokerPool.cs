@@ -7,9 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace ApiGateway
 {
-    // mTLS towards the downstream services. Ocelot has no client-certificate setting, so the HTTP handler
-    // it builds per route is extended here: the gateway presents its client certificate and accepts only
-    // server certificates issued by the project CA.
+    // mTLS to services: Ocelot has no client-cert option, so extend its per-route handler.
     public class MtlsMessageInvokerPool : MessageInvokerPool
     {
         private readonly X509Certificate2 _clientCertificate;
@@ -38,9 +36,9 @@ namespace ApiGateway
         private bool IsIssuedByCa(X509Certificate2 certificate)
         {
             using var chain = new X509Chain();
-            chain.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust; // Trust only the project CA, not the OS store.
+            chain.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust; // Project CA only.
             chain.ChainPolicy.CustomTrustStore.Add(_ca);
-            chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck; // Limitation: dev CA has no CRL, so issued certs cannot be revoked.
+            chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck; // Limitation: no CRL, certs not revocable.
             chain.ChainPolicy.ApplicationPolicy.Add(new Oid("1.3.6.1.5.5.7.3.1")); // EKU: server authentication.
 
             return chain.Build(certificate);
