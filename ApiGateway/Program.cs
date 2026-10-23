@@ -18,16 +18,6 @@ builder.WebHost.ConfigureKestrel(options =>
 
 builder.Configuration.AddJsonFile(path: "ocelot.json", optional: false, reloadOnChange: true);
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("Client", builder =>
-    {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
-    });
-});
-
 builder.Services.AddOcelot().AddDelegatingHandler<HideDownstreamErrorsHandler>(global: true);
 builder.Services.AddSingleton<IMessageInvokerPool, MtlsMessageInvokerPool>(); // mTLS to services.
 
@@ -64,7 +54,6 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors("Client");
 app.UseRateLimiter();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 await app.UseOcelot();
