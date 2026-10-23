@@ -2,6 +2,7 @@ using ApiGateway;
 using ApiGateway.Middlewares;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Ocelot.Requester;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddOcelot();
+builder.Services.AddSingleton<IMessageInvokerPool, MtlsMessageInvokerPool>(); // Replaces Ocelot's default: adds mTLS to downstream calls.
 
 // DI
 builder.Services.AddJwtAuthentication(builder.Configuration);
@@ -39,6 +41,11 @@ app.Use(async (context, next) =>
     });
     await next();
 });
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts(); // Tells browsers to use HTTPS only for this host.
+}
 
 app.UseHttpsRedirection();
 app.UseDefaultFiles();
