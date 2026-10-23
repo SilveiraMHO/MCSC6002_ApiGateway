@@ -43,6 +43,11 @@ app.Use(async (context, next) =>
     await next();
 });
 
+// Explicit, so they run after the header middleware above. Without these calls ASP.NET inserts them at the very
+// start of the pipeline; the JWT handler then writes 401 responses before OnStarting is registered, and the request crashes.
+app.UseAuthentication();
+app.UseAuthorization();
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseHsts(); // Tells browsers to use HTTPS only for this host.
